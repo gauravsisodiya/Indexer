@@ -184,5 +184,47 @@ public class Index {
 		
 		//System.out.println(jsonArray.toString());
 	}
+	
+	
+	
+	public void extractMetaData(String fileName,String url)
+	{
+		try
+		{
+			FileWriter metadataFile = new FileWriter("./CrawlerStorage/metadata.json",true);
+			JSONObject json = new JSONObject();
+					
+			File dirLoc = new File("./CrawlerStorage");
+			for(File file : dirLoc.listFiles())
+			{
+				if(file.isDirectory() && file.getName().equals(fileName))
+				{
+					for(File jsonFile : file.listFiles())
+					{
+						if(jsonFile.getName().equals(fileName+".json"))
+						{		
+							JSONParser jsonParser = new JSONParser();
+							JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(jsonFile));
+						
+							json.put("URL", url);
+							json.put("File Name", fileName);
+							json.put("MetaData", jsonObject.get("Metadata"));
+							
+							metadataFile.write(json.toJSONString());
+							metadataFile.write("\r\n");
+		    				
+						}
+					}
+				}
+			}
+			
+			metadataFile.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 
 }
