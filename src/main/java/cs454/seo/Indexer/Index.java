@@ -27,9 +27,9 @@ import org.w3c.dom.ls.LSInput;
 public class Index {
 
 	public Map<String, Map<String, Integer>> wordCount = new HashMap<String, Map<String, Integer>>();
-	List<String> stopWords = getStopWords();
+	public static List<String> stopWords = new ArrayList<String>();
 
-	public void controlIndex() {
+	public void controlIndex(String filePath) {
 		JSONParser parser = new JSONParser();
 		System.out.println(stopWords);
 		
@@ -37,7 +37,7 @@ public class Index {
 
 			JSONArray jsonArray = (JSONArray) parser
 					.parse(new FileReader(
-							"C:/Users/Gaurav/CS454_Web_Search_Engine/extractor-app/Control.json"));
+							filePath));
 
 			JSONObject jsonObject = new JSONObject();
 			for (Object obj : jsonArray) {
@@ -61,7 +61,7 @@ public class Index {
 	private void performIndex(String path, String UUId) {
 		try {
 			Parser parser = new AutoDetectParser();
-			BodyContentHandler contentHandler = new BodyContentHandler();
+			BodyContentHandler contentHandler = new BodyContentHandler(10*1024*1024);
 			Metadata metadata = new Metadata();
 
 			FileInputStream inputStream = new FileInputStream(path);
@@ -98,10 +98,10 @@ public class Index {
 
 	}
 
-	public List<String> getStopWords() {
-		List<String> stopWords = new ArrayList<String>();
+	public List<String> getStopWords(String path) {
 		try {
-			FileReader inputFile = new FileReader("./stopwords.txt");
+			System.out.println(path);
+			FileReader inputFile = new FileReader(path);
 			BufferedReader bufferReader = new BufferedReader(inputFile);
 
 			String line;
@@ -113,6 +113,7 @@ public class Index {
 				}
 			}
 		} catch (Exception e) {
+			//e.printStackTrace();
 			System.out.println("Error while reading file  by line:"
 					+ e.getMessage());
 		}
