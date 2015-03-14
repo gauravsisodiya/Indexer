@@ -73,7 +73,7 @@ public class Index {
 				String element = stringTokenizer.nextToken();
 				element = cleanElement(element);
 
-				if (!stopWords.equals((element))) {
+				if (!stopWords.equals((element)) && checkElements(element) == false) {
 					Map<String, Integer> pageWordCount = new HashMap<String, Integer>();
 					if (wordCount.get(element) == null) {
 						pageWordCount.put(UUId, 1);
@@ -146,6 +146,7 @@ public class Index {
 
 		return element;
 	}
+	
 	public void fileWriter() throws IOException
 	{
 		JSONArray jsonArray = new JSONArray();
@@ -226,5 +227,13 @@ public class Index {
 		}
 	}
 
+	
+	public boolean checkElements(String element)
+	{
+		if(element.equals("#") || element.equals("&") || element.equals("+") || element.equals("-") || element.equals("") || element.equals("|") || element.equals(".") || element.equals("\\\\"))
+			return true;
+		
+		return false;
+	}
 
 }
