@@ -10,16 +10,20 @@ public class LinkData {
 	private String id;
 	private String path;
 	private List<String> goingOut;
+	private List<String> incoming;
 	private int pointedBy;
 	private double rank;
 	private double newRank;
 	private String url;
+	private double finalRank1;
+	private double finalRank2;
 	JSONObject json;
 	
 	public LinkData() {
 		super();
 		goingOut = new ArrayList<String>();
 		json = new JSONObject();
+		incoming = new ArrayList<String>();
 	}
 	public LinkData(String id, String path, List<String> goingOut,
 			int pointedBy, double rank, String url) {
@@ -88,7 +92,28 @@ public class LinkData {
 		this.json.put("id", this.id);
 		this.json.put("URL", this.url);
 		//this.json.put("path", this.path);
-		this.json.put("Rank",this.rank);
+		this.json.put("Link Analysis Rank",this.finalRank1);
+		this.json.put("Our Ranking", this.finalRank2);
 	}
+	public double getFinalRank1() {
+		return finalRank1;
+	}
+	public void setFinalRank1() {
+		this.finalRank1 = this.rank;
+	}
+	public double getFinalRank2() {
+		return finalRank2;
+	}
+	public void setFinalRank2() {
+		this.finalRank2 = this.rank;
+	}
+	public List<String> getIncoming() {
+		return incoming;
+	}
+	public void setIncoming(List<String> incoming) {
+		this.incoming = incoming;
+	}
+	
+	
 	
 }
