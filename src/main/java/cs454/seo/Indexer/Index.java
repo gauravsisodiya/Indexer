@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,7 @@ public class Index {
 			if(stopWords.contains("+"))
 				System.out.println("correct");
 			//printWordCount();
-			fileWriter();
+			//fileWriter();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,6 +68,7 @@ public class Index {
 			FileInputStream inputStream = new FileInputStream(path);
 			ParseContext context = new ParseContext();
 			parser.parse(inputStream, contentHandler, metadata, context);
+			System.out.println(contentHandler.toString());
 			StringTokenizer stringTokenizer = new StringTokenizer(
 					contentHandler.toString()," .,-#");
 			while (stringTokenizer.hasMoreTokens()) {
@@ -149,29 +151,34 @@ public class Index {
 	
 	public void fileWriter() throws IOException
 	{
-		JSONArray jsonArray = new JSONArray();
+		JSONArray jsonArray;
 		Map<String, Integer> pageMap;
-		JSONObject jsonObj = new JSONObject();
+		JSONObject jsonObj;
 		JSONObject jsonPage = new JSONObject();
 		
 		for(String word : wordCount.keySet())
 		{
-			jsonObj = new JSONObject();
-			jsonObj.put("Word", word.toString());
+			jsonArray = new JSONArray();
 			pageMap =  wordCount.get(word);
-			jsonPage = new JSONObject();
+			double totSize = pageMap.size();
+			double tf= 0.0;
 			for(String page : pageMap.keySet())
 			{
-				jsonPage.put(page, pageMap.get(page).toString());
+				jsonObj = new JSONObject();
+				jsonObj.put("uuid", page);
+				jsonObj.put("count", pageMap.get(page));
+				tf = pageMap.get(page)/totSize;
+				tf =Double.parseDouble(new DecimalFormat("##.##").format(tf));
+				jsonObj.put("tf", tf);
+				jsonArray.add(jsonObj);
 			}
-			jsonArray.add(jsonObj);
-			jsonArray.add(jsonPage);
+			jsonPage.put(word, jsonArray);
 			
 		}
 		
-		FileWriter file = new FileWriter("./indexer.json");
+		FileWriter file = new FileWriter("./indexer.json",false);
         try {
-            file.write(jsonArray.toJSONString());
+            file.write(jsonPage.toJSONString());
             System.out.println("Successfully Copied JSON Object to File...");
             
  
