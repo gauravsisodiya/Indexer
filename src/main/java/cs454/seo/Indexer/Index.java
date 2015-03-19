@@ -114,7 +114,7 @@ public class Index {
 			ParseContext context = new ParseContext();
 			parser.parse(inputStream, contentHandler, metadata, context);
 			StringTokenizer stringTokenizer = new StringTokenizer(
-					contentHandler.toString().replaceAll("\\s+", " ")," .,-#\\n//");
+					contentHandler.toString().replaceAll("\\s+", " ")," .,-");
 			
 			while (stringTokenizer.hasMoreTokens()) {
 				String element = stringTokenizer.nextToken();

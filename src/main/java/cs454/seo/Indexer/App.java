@@ -17,7 +17,7 @@ public class App
         Index index = new Index();
         index.getStopWords(stopPath);
         index.controlIndex(path);
-        Rank ranking = new Rank();
-        ranking.start(path);
+        //Rank ranking = new Rank();
+       // ranking.start(path);
     }
 }
