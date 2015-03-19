@@ -24,10 +24,12 @@ public class Rank {
 	private HashMap<String, Integer> outgoingCount = new HashMap<String, Integer>();
 	private HashMap<String, LinkData> records = new HashMap<String, LinkData>();
 	private JSONArray mainArr = new JSONArray();
+	private JSONObject jsonObj = new JSONObject();
 
 	public void saveArray() throws IOException {
 		FileWriter file = new FileWriter(".\\ranking.json", false);
-		file.write(mainArr.toJSONString());
+		//file.write(mainArr.toJSONString());
+		file.write(jsonObj.toJSONString());
 		file.write("\r\n");
 		file.flush();
 		file.close();
@@ -107,12 +109,7 @@ public class Rank {
 			}
 		}
 
-		/*
-		 * for(LinkData tempLink : allLinks)
-		 * System.out.println(tempLink.getPointedBy());
-		 */
-		// System.out.println(allLinks);
-		// System.out.println(numOfLinks);
+
 		beginMyRanking();
 
 	}
@@ -166,13 +163,6 @@ public class Rank {
 		
 		beginOrignalRanking();
 
-		/*for (LinkData link : allLinks) {
-			System.out.println(link.getUrl() + " -> " + link.getRank());
-			link.createJSON();
-			mainArr.add(link.getJson());
-		}
-		saveArray();*/
-
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -222,8 +212,10 @@ public class Rank {
 
 		for (LinkData link : allLinks) {
 			link.setFinalRank2();
+			link.round();
 			System.out.println(link.getUrl() + " -> " + link.getRank());
 			link.createJSON();
+			jsonObj.put(link.getId(), link.getJson());
 			mainArr.add(link.getJson());
 		}
 		saveArray();

@@ -1,5 +1,6 @@
 package cs454.seo.Indexer;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,12 +89,19 @@ public class LinkData {
 		this.rank = this.newRank;
 	}
 	
+	public void round(){
+		this.finalRank1 = Double.parseDouble(new DecimalFormat("##.####").format(this.finalRank1));
+		//System.out.println(this.finalRank1);
+		this.finalRank2 = Double.parseDouble(new DecimalFormat("##.####").format(this.finalRank2));
+		//System.out.println(this.finalRank2);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void createJSON(){
-		this.json.put("id", this.id);
+		//this.json.put("id", this.id);
 		this.json.put("URL", this.url);
-		this.json.put("Link Analysis Rank",this.finalRank1);
-		this.json.put("Our Ranking", this.finalRank2);
+		this.json.put("Rank",this.finalRank1);
+		//this.json.put("Our Ranking", this.finalRank2);
 	}
 	public double getFinalRank1() {
 		return finalRank1;
