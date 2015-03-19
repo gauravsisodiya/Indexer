@@ -27,11 +27,10 @@ public class Index {
 	
 	public Map<String, List<PageIndex>> wordCount = new HashMap<String, List<PageIndex>>();
 	public static List<String> stopWords = new ArrayList<String>();
-	//public Map<String, Map<String, Integer>> titleRank = new HashMap<String, Map<String, Integer>>();
 	
 	public void controlIndex(String filePath) {
 		JSONParser parser = new JSONParser();
-		System.out.println(stopWords);
+		System.out.println("Indexing Started...");
 		
 		try {
 
@@ -57,9 +56,9 @@ public class Index {
 				performMetadataIndex(jsonObject.get("MetaData"),UUId);
 			}
 			
+			System.out.println("Indexing Completed...Now writing to Indexer.json File");
 			//printWordCount();
 			fileWriter();
-			//printTitleRank();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -88,7 +87,6 @@ public class Index {
 			{
 				String element = stringTokenizer.nextToken();
 				addIndex2Map(element, UUId);
-				
 			}
 		}
 		
@@ -102,11 +100,10 @@ public class Index {
 				addIndex2Map(element, UUId);
 			}
 		}
-		
-		
 	}
 
 	private void performIndex(String path, String UUId, String title) {
+		
 		try {
 			
 			Parser parser = new AutoDetectParser();
@@ -128,7 +125,6 @@ public class Index {
 					
 					addTitle2HashMap(element,title,UUId);
 				}
-
 			}
 
 		} catch (Exception e) {
@@ -207,7 +203,6 @@ public class Index {
 				}
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
 			System.out.println("Error while reading file  by line:"
 					+ e.getMessage());
 		}
@@ -270,8 +265,6 @@ public class Index {
 				totalFactor =Double.parseDouble(new DecimalFormat("##.##").format(totalFactor));
 				jsonObj.put("TotalFactor", Double.toString(totalFactor));
 				jsonObj.put("TitleRank", Integer.toString(page.getTitleRank()));
-				//jsonObj = addTitleRank(jsonObj,word);
-				//System.out.println("JsonObject"+jsonObj);
 				jsonArray.add(jsonObj);
 			}
 			jsonPage.put(word, jsonArray);
@@ -283,7 +276,6 @@ public class Index {
             file.write(jsonPage.toJSONString());
             System.out.println("Successfully Copied JSON Object to File...");
             
- 
         } catch (IOException e) {
             e.printStackTrace();
  
@@ -292,7 +284,6 @@ public class Index {
             file.close();
         }
 		
-		//System.out.println(jsonArray.toString());
 	}
 	
 	public boolean checkElements(String element)

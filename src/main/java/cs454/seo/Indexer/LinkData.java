@@ -92,7 +92,6 @@ public class LinkData {
 	public void createJSON(){
 		this.json.put("id", this.id);
 		this.json.put("URL", this.url);
-		//this.json.put("path", this.path);
 		this.json.put("Link Analysis Rank",this.finalRank1);
 		this.json.put("Our Ranking", this.finalRank2);
 	}
@@ -114,7 +113,4 @@ public class LinkData {
 	public void setIncoming(List<String> incoming) {
 		this.incoming = incoming;
 	}
-	
-	
-	
 }
