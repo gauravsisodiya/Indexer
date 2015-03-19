@@ -255,15 +255,15 @@ public class Index {
 			jsonArray = new JSONArray();
 			pageIndex =  wordCount.get(word);
 			double totalSize = pageIndex.size();
-			double totalFactor = 0.0;
+			double termFreq = 0.0;
 			for(PageIndex page : pageIndex)
 			{
 				jsonObj = new JSONObject();
 				jsonObj.put("UUId", page.getuUId().toString());
 				jsonObj.put("Count", Integer.toString(page.getWordCount()));
-				totalFactor = page.getWordCount() / totalSize;
-				totalFactor =Double.parseDouble(new DecimalFormat("##.##").format(totalFactor));
-				jsonObj.put("TotalFactor", Double.toString(totalFactor));
+				termFreq = page.getWordCount() / totalSize;
+				termFreq =Double.parseDouble(new DecimalFormat("##.##").format(termFreq));
+				jsonObj.put("TermFrequency", Double.toString(termFreq));
 				jsonObj.put("TitleRank", Integer.toString(page.getTitleRank()));
 				jsonArray.add(jsonObj);
 			}
