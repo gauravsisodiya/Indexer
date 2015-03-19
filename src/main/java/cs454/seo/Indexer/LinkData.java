@@ -88,6 +88,7 @@ public class LinkData {
 		this.rank = this.newRank;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void createJSON(){
 		this.json.put("id", this.id);
 		this.json.put("URL", this.url);

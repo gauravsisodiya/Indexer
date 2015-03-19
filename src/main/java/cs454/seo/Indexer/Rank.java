@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -86,7 +85,7 @@ public class Rank {
 		}
 
 		// start calculating incoming links here
-		Iterator itr = allLinks.iterator();
+		//Iterator itr = allLinks.iterator();
 		int tempStore;
 
 		for (LinkData single : allLinks) {
@@ -176,6 +175,7 @@ public class Rank {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void beginOrignalRanking() throws IOException {
 		System.out.println("Number of Links" + numOfLinks);
 		double defaultRank = 1.0 / numOfLinks;
