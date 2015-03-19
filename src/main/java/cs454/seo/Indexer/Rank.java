@@ -221,5 +221,19 @@ public class Rank {
 		saveArray();
 
 	}
+	
+	/*
+	 * public static UUID save(String url) { UUID uuid = null; try{
+	 * if(!url.toLowerCase().contains("https")) { uuid = UUID.randomUUID(); File
+	 * directory = new File(".\\CrawlerStorage\\"+uuid.toString()); if
+	 * (directory.mkdir()) { System.out.println("Directory is created!"); } else
+	 * { System.out.println("Failed to create directory!"); } //creating new obj
+	 * DataWeb data = new DataWeb();
+	 * 
+	 * //adding url data.setUrl(url);
+	 * 
+	 * 
+	 * 
+*/
 
 }
