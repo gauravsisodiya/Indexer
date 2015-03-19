@@ -45,7 +45,7 @@ public class Index {
 				String path = jsonObject.get("path").toString()
 						.replaceAll("\\\\", "/");
 				metaObj = (JSONObject) jsonObject.get("MetaData");
-				String title ="";
+				String title = "";
 				if(metaObj.get("title")!= null)
 				{
 					title = metaObj.get("title").toString();
@@ -75,29 +75,31 @@ public class Index {
 			while(stringTokenizer.hasMoreElements())
 			{
 				String element = stringTokenizer.nextToken();
-				addIndex2Map(element, UUId);
+				addIndex2Map(element, UUId,"");
 			}
 		}
 		
 		if(jsonObject.get("Description")!= null)
 		{
-			String title = jsonObject.get("Description").toString();
-			StringTokenizer stringTokenizer = new StringTokenizer(title," .");
+			String description = jsonObject.get("Description").toString();
+			StringTokenizer stringTokenizer = new StringTokenizer(description," .");
 			while(stringTokenizer.hasMoreElements())
 			{
 				String element = stringTokenizer.nextToken();
-				addIndex2Map(element, UUId);
+				System.out.println("desc:: "+description );
+				addIndex2Map(element, UUId,description);
+				
 			}
 		}
 		
 		if(jsonObject.get("Author")!= null)
 		{
-			String title = jsonObject.get("Author").toString();
-			StringTokenizer stringTokenizer = new StringTokenizer(title," ,.");
+			String author = jsonObject.get("Author").toString();
+			StringTokenizer stringTokenizer = new StringTokenizer(author," ,.");
 			while(stringTokenizer.hasMoreElements())
 			{
 				String element = stringTokenizer.nextToken();
-				addIndex2Map(element, UUId);
+				addIndex2Map(element, UUId,"");
 			}
 		}
 	}
@@ -121,7 +123,7 @@ public class Index {
 				element = cleanElement(element);
 
 				if (!stopWords.equals((element)) && checkElements(element) == false && element.length()>2 && isNumeric(element) == false) {
-					addIndex2Map(element, UUId);
+					addIndex2Map(element, UUId,"");
 					
 					addTitle2HashMap(element,title,UUId);
 				}
@@ -133,7 +135,7 @@ public class Index {
 
 	}
 	
-	private void addIndex2Map(String element,String UUId)
+	private void addIndex2Map(String element,String UUId,String description)
 	{
 		List<PageIndex> pageWordList = new ArrayList<PageIndex>();
 		PageIndex pageIndex = new PageIndex();
@@ -141,6 +143,7 @@ public class Index {
 		if (wordCount.get(element) == null) {
 			pageIndex.setuUId(UUId);
 			pageIndex.setWordCount(1);
+			pageIndex.setDescription(description);
 			pageWordList.add(pageIndex);
 			wordCount.put(element, pageWordList);
 		
@@ -162,6 +165,7 @@ public class Index {
 				pageIndex = new PageIndex();
 				pageIndex.setuUId(UUId);
 				pageIndex.setWordCount(1);
+				pageIndex.setDescription(description);
 				pageWordList.add(pageIndex);
 			}
 			wordCount.put(element, pageWordList);
@@ -265,6 +269,7 @@ public class Index {
 				termFreq =Double.parseDouble(new DecimalFormat("##.##").format(termFreq));
 				jsonObj.put("TermFrequency", Double.toString(termFreq));
 				jsonObj.put("TitleRank", Integer.toString(page.getTitleRank()));
+				jsonObj.put("Description", page.getDescription());
 				jsonArray.add(jsonObj);
 			}
 			jsonPage.put(word, jsonArray);

@@ -10,6 +10,8 @@ public class PageIndex {
 	
 	int titleRank;
 
+	String description;
+	
 	public String getuUId() {
 		return uUId;
 	}
@@ -40,6 +42,14 @@ public class PageIndex {
 
 	public void setTitleRank(int titleRank) {
 		this.titleRank = titleRank;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	
