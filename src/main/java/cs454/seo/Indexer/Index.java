@@ -21,43 +21,45 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-
 public class Index {
 
-	
 	public Map<String, List<PageIndex>> wordCount = new HashMap<String, List<PageIndex>>();
 	public static List<String> stopWords = new ArrayList<String>();
-	
+
 	public void controlIndex(String filePath) {
 		JSONParser parser = new JSONParser();
 		System.out.println("Indexing Started...");
-		
+
 		try {
 
-			JSONArray jsonArray = (JSONArray) parser
-					.parse(new FileReader(
-							filePath));
+			JSONArray jsonArray = (JSONArray) parser.parse(new FileReader(
+					filePath));
 
 			JSONObject jsonObject = new JSONObject();
-			JSONObject metaObj ;
+			JSONObject metaObj;
 			for (Object obj : jsonArray) {
 				jsonObject = (JSONObject) obj;
 				String path = jsonObject.get("path").toString()
 						.replaceAll("\\\\", "/");
 				metaObj = (JSONObject) jsonObject.get("MetaData");
 				String title = "";
-				if(metaObj.get("title")!= null)
-				{
+				String description = "";
+				if (metaObj.get("title") != null) {
 					title = metaObj.get("title").toString();
 				}
+				if (metaObj.get("Description") != null) {
+					description = metaObj.get("Description").toString();
+				}
+
 				String UUId = path.substring(path.lastIndexOf("/") + 1,
 						path.lastIndexOf("."));
-				performIndex(path, UUId,title);
-				performMetadataIndex(jsonObject.get("MetaData"),UUId);
+				performIndex(path, UUId, title, description);
+				performMetadataIndex(jsonObject.get("MetaData"), UUId);
 			}
-			
-			System.out.println("Indexing Completed...Now writing to Indexer.json File");
-			//printWordCount();
+
+			System.out
+					.println("Indexing Completed...Now writing to Indexer.json File");
+			// printWordCount();
 			fileWriter();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -65,67 +67,67 @@ public class Index {
 	}
 
 	private void performMetadataIndex(Object object, String UUId) {
-		
-		JSONObject jsonObject =  (JSONObject) object;
-		
-		if(jsonObject.get("title")!= null)
-		{
+
+		JSONObject jsonObject = (JSONObject) object;
+
+		if (jsonObject.get("title") != null) {
 			String title = jsonObject.get("title").toString();
-			StringTokenizer stringTokenizer = new StringTokenizer(title," -.");
-			while(stringTokenizer.hasMoreElements())
-			{
+			StringTokenizer stringTokenizer = new StringTokenizer(title, " -.");
+			while (stringTokenizer.hasMoreElements()) {
 				String element = stringTokenizer.nextToken();
-				addIndex2Map(element, UUId,"");
+				addIndex2Map(element, UUId, "");
+				addTitle2HashMap(element, title, UUId, "");
 			}
 		}
-		
-		if(jsonObject.get("Description")!= null)
-		{
+
+		if (jsonObject.get("Description") != null) {
 			String description = jsonObject.get("Description").toString();
-			StringTokenizer stringTokenizer = new StringTokenizer(description," .");
-			while(stringTokenizer.hasMoreElements())
-			{
+			StringTokenizer stringTokenizer = new StringTokenizer(description,
+					" .");
+			while (stringTokenizer.hasMoreElements()) {
 				String element = stringTokenizer.nextToken();
-				System.out.println("desc:: "+description );
-				addIndex2Map(element, UUId,description);
-				
+				// System.out.println("desc:: " + description);
+				addIndex2Map(element, UUId, description);
+				addTitle2HashMap(element, "", UUId, description);
 			}
 		}
-		
-		if(jsonObject.get("Author")!= null)
-		{
+
+		if (jsonObject.get("Author") != null) {
 			String author = jsonObject.get("Author").toString();
-			StringTokenizer stringTokenizer = new StringTokenizer(author," ,.");
-			while(stringTokenizer.hasMoreElements())
-			{
+			StringTokenizer stringTokenizer = new StringTokenizer(author, " ,.");
+			while (stringTokenizer.hasMoreElements()) {
 				String element = stringTokenizer.nextToken();
-				addIndex2Map(element, UUId,"");
+				addIndex2Map(element, UUId, "");
 			}
 		}
 	}
 
-	private void performIndex(String path, String UUId, String title) {
-		
+	private void performIndex(String path, String UUId, String title,
+			String description) {
+
 		try {
-			
+
 			Parser parser = new AutoDetectParser();
-			BodyContentHandler contentHandler = new BodyContentHandler(10*1024*1024);
+			BodyContentHandler contentHandler = new BodyContentHandler(
+					10 * 1024 * 1024);
 			Metadata metadata = new Metadata();
-			
+
 			FileInputStream inputStream = new FileInputStream(path);
 			ParseContext context = new ParseContext();
 			parser.parse(inputStream, contentHandler, metadata, context);
 			StringTokenizer stringTokenizer = new StringTokenizer(
-					contentHandler.toString().replaceAll("\\s+", " ")," .,-");
-			
+					contentHandler.toString().replaceAll("\\s+", " "), " .,-");
+
 			while (stringTokenizer.hasMoreTokens()) {
 				String element = stringTokenizer.nextToken();
 				element = cleanElement(element);
 
-				if (!stopWords.equals((element)) && checkElements(element) == false && element.length()>2 && isNumeric(element) == false) {
-					addIndex2Map(element, UUId,"");
-					
-					addTitle2HashMap(element,title,UUId);
+				if (!stopWords.equals((element))
+						&& checkElements(element) == false
+						&& element.length() > 2 && isNumeric(element) == false) {
+					addIndex2Map(element, UUId, "");
+
+					addTitle2HashMap(element, title, UUId, description);
 				}
 			}
 
@@ -134,34 +136,29 @@ public class Index {
 		}
 
 	}
-	
-	private void addIndex2Map(String element,String UUId,String description)
-	{
+
+	private void addIndex2Map(String element, String UUId, String description) {
 		List<PageIndex> pageWordList = new ArrayList<PageIndex>();
 		PageIndex pageIndex = new PageIndex();
-		
+
 		if (wordCount.get(element) == null) {
 			pageIndex.setuUId(UUId);
 			pageIndex.setWordCount(1);
 			pageIndex.setDescription(description);
 			pageWordList.add(pageIndex);
 			wordCount.put(element, pageWordList);
-		
-		} 
-		else {
+
+		} else {
 			pageWordList = wordCount.get(element);
 			boolean flag = true;
-			for(PageIndex p : pageWordList)
-			{
-				if(p.getuUId().equalsIgnoreCase(UUId))
-				{
-					int count =  p.getWordCount();
+			for (PageIndex p : pageWordList) {
+				if (p.getuUId().equalsIgnoreCase(UUId)) {
+					int count = p.getWordCount();
 					p.setWordCount(++count);
 					flag = false;
 				}
 			}
-			if(flag)
-			{
+			if (flag) {
 				pageIndex = new PageIndex();
 				pageIndex.setuUId(UUId);
 				pageIndex.setWordCount(1);
@@ -172,20 +169,20 @@ public class Index {
 		}
 	}
 
-	private void addTitle2HashMap(String element, String title, String UUId) {
-		
+	private void addTitle2HashMap(String element, String title, String UUId,
+			String desciption) {
+
 		List<PageIndex> pageIndexList = wordCount.get(element);
-		for(PageIndex p : pageIndexList)
-		{
-			if(p.getuUId().equals(UUId))
-			{
-				if(title.toLowerCase().contains(element))
-				{
+		for (PageIndex p : pageIndexList) {
+			if (p.getuUId().equals(UUId)) {
+				if (title.toLowerCase().contains(element)) {
 					p.setTitleRank(1);
-				}
-				else
-				{
+				} else {
 					p.setTitleRank(0);
+				}
+				if (desciption.toLowerCase().contains(element)) {
+					int titleRank = p.getTitleRank();
+					p.setTitleRank(++titleRank);
 				}
 			}
 		}
@@ -193,7 +190,7 @@ public class Index {
 
 	public List<String> getStopWords(String path) {
 		try {
-			
+
 			FileReader inputFile = new FileReader(path);
 			@SuppressWarnings("resource")
 			BufferedReader bufferReader = new BufferedReader(inputFile);
@@ -217,16 +214,14 @@ public class Index {
 	public void printWordCount() {
 		for (String word : wordCount.keySet()) {
 			System.out.println("Word: " + word);
-			for(PageIndex p:wordCount.get(word))
-			{
-				System.out.println("UUId:: "+p.getuUId());
-				System.out.println("Count:: "+p.getWordCount());
-				System.out.println("TitleRank:: "+p.getTitleRank());
+			for (PageIndex p : wordCount.get(word)) {
+				System.out.println("UUId:: " + p.getuUId());
+				System.out.println("Count:: " + p.getWordCount());
+				System.out.println("TitleRank:: " + p.getTitleRank());
 			}
 		}
 
 	}
-	
 
 	public String cleanElement(String element) {
 
@@ -245,66 +240,65 @@ public class Index {
 
 		return element;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public void fileWriter() throws IOException
-	{
+	public void fileWriter() throws IOException {
 		JSONArray jsonArray;
 		List<PageIndex> pageIndex;
 		JSONObject jsonObj;
 		JSONObject jsonPage = new JSONObject();
-		
-		for(String word : wordCount.keySet())
-		{
+
+		for (String word : wordCount.keySet()) {
 			jsonArray = new JSONArray();
-			pageIndex =  wordCount.get(word);
+			pageIndex = wordCount.get(word);
 			double totalSize = pageIndex.size();
 			double termFreq = 0.0;
-			for(PageIndex page : pageIndex)
-			{
+			for (PageIndex page : pageIndex) {
 				jsonObj = new JSONObject();
 				jsonObj.put("UUId", page.getuUId().toString());
 				jsonObj.put("Count", Integer.toString(page.getWordCount()));
 				termFreq = page.getWordCount() / totalSize;
-				termFreq =Double.parseDouble(new DecimalFormat("##.##").format(termFreq));
+				termFreq = Double.parseDouble(new DecimalFormat("##.##")
+						.format(termFreq));
 				jsonObj.put("TermFrequency", Double.toString(termFreq));
 				jsonObj.put("TitleRank", Integer.toString(page.getTitleRank()));
 				jsonObj.put("Description", page.getDescription());
 				jsonArray.add(jsonObj);
 			}
 			jsonPage.put(word, jsonArray);
-			
+
 		}
-		
-		FileWriter file = new FileWriter("./indexer.json",false);
-        try {
-            file.write(jsonPage.toJSONString());
-            System.out.println("Successfully Copied JSON Object to File...");
-            
-        } catch (IOException e) {
-            e.printStackTrace();
- 
-        } finally {
-            file.flush();
-            file.close();
-        }
-		
+
+		FileWriter file = new FileWriter("./indexer.json", false);
+		try {
+			file.write(jsonPage.toJSONString());
+			System.out.println("Successfully Copied JSON Object to File...");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+
+		} finally {
+			file.flush();
+			file.close();
+		}
+
 	}
-	
-	public boolean checkElements(String element)
-	{
-		if(element.equals("#") || element.equals("&") || element.equals("+") || element.equals("-") || element.equals("") || element.equals("|") || element.equals(".") || element.equals("\\\\"))
+
+	public boolean checkElements(String element) {
+		if (element.equals("#") || element.equals("&") || element.equals("+")
+				|| element.equals("-") || element.equals("")
+				|| element.equals("|") || element.equals(".")
+				|| element.equals("\\\\"))
 			return true;
-		
+
 		return false;
 	}
-	
-	public boolean isNumeric(String element)
-	{
+
+	public boolean isNumeric(String element) {
 		String regex = "[0-9]+";
-		if(element.matches(regex))
+		if (element.matches(regex))
 			return true;
-		
+
 		return false;
 	}
 
