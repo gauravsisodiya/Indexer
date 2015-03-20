@@ -113,6 +113,15 @@ public class Rank {
 		beginMyRanking();
 
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public void beginMyRanking() throws IOException {
 		System.out.println("Number of Links" + numOfLinks);
@@ -221,6 +230,59 @@ public class Rank {
 		saveArray();
 
 	}
+	
+	//code changes made by shreyas
+	public void LastRanking() throws IOException {
+		System.out.println("Number of Links" + numOfLinks);
+		double defaultRank = 1.0 / numOfLinks;
+		System.out.println("Default Rank " + defaultRank);
+
+		for (LinkData link : allLinks) {
+			link.setRank(defaultRank);
+			link.setNewRank(defaultRank);
+		}
+
+		double rank;
+		double tempRank;
+		LinkData holder;
+		for (int i = 0; i < 10; i++) {
+			// System.out.println("Iteration number : "+i);
+			for (String url : records.keySet()) {
+				holder = records.get(url);
+				rank = 0;
+				for (String goingOut : holder.getGoingOut()) {
+					if (records.containsKey(goingOut)) {
+						tempRank = records.get(goingOut).getRank();
+						if (incomingCount.containsKey(goingOut))
+							if (incomingCount.get(goingOut) > 0)
+								tempRank = tempRank
+										/ incomingCount.get(goingOut);
+						rank = rank + tempRank;
+					} else {
+						rank = rank + defaultRank;
+					}
+				}
+				if (rank == 0.0)
+					rank = defaultRank;
+
+				// System.out.println("Rank : "+rank);
+
+				holder.setNewRank(rank);
+				holder.setFinalRank1();
+			}
+			for (LinkData link : allLinks) {
+				link.copyRank();
+			}
+		}
+		
+		for (LinkData link : allLinks) {
+			link.getFinalRank1();
+		}
+		
+		beginOrignalRanking();
+
+	}
+
 	
 
 }
