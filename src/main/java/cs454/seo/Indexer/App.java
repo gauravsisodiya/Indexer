@@ -16,8 +16,17 @@ public class App
     	
         Index index = new Index();
         index.getStopWords(stopPath);
+        System.out.println("Indexing Started...");
+
         index.controlIndex(path);
+        System.out
+		.println("Indexing Completed...Result written to Indexer.json File");
+        
         Rank ranking = new Rank();
+        System.out.println("Ranking Started...");
+
         ranking.start(path);
+        System.out
+		.println("Ranking Completed...Result written to Ranking.json File");
     }
 }

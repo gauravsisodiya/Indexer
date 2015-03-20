@@ -28,8 +28,7 @@ public class Index {
 
 	public void controlIndex(String filePath) {
 		JSONParser parser = new JSONParser();
-		System.out.println("Indexing Started...");
-
+		
 		try {
 
 			JSONArray jsonArray = (JSONArray) parser.parse(new FileReader(
@@ -57,8 +56,7 @@ public class Index {
 				performMetadataIndex(jsonObject.get("MetaData"), UUId);
 			}
 
-			System.out
-					.println("Indexing Completed...Now writing to Indexer.json File");
+			
 			// printWordCount();
 			fileWriter();
 		} catch (Exception e) {
@@ -86,7 +84,6 @@ public class Index {
 					" .");
 			while (stringTokenizer.hasMoreElements()) {
 				String element = stringTokenizer.nextToken();
-				// System.out.println("desc:: " + description);
 				addIndex2Map(element, UUId, description);
 				addTitle2HashMap(element, "", UUId, description);
 			}
