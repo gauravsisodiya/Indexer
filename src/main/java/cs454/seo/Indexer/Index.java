@@ -73,28 +73,34 @@ public class Index {
 			StringTokenizer stringTokenizer = new StringTokenizer(title, " -.");
 			while (stringTokenizer.hasMoreElements()) {
 				String element = stringTokenizer.nextToken();
-				addIndex2Map(element, UUId, "");
+				addIndex2Map(element, UUId, "",title);
 				addTitle2HashMap(element, title, UUId, "");
 			}
 		}
 
 		if (jsonObject.get("Description") != null) {
 			String description = jsonObject.get("Description").toString();
+			String title = "";
+			if (jsonObject.get("title") != null) 
+				title = jsonObject.get("title").toString();
 			StringTokenizer stringTokenizer = new StringTokenizer(description,
 					" .");
 			while (stringTokenizer.hasMoreElements()) {
 				String element = stringTokenizer.nextToken();
-				addIndex2Map(element, UUId, description);
+				addIndex2Map(element, UUId, description,title);
 				addTitle2HashMap(element, "", UUId, description);
 			}
 		}
 
 		if (jsonObject.get("Author") != null) {
 			String author = jsonObject.get("Author").toString();
+			String title = "";
+			if (jsonObject.get("title") != null) 
+				title = jsonObject.get("title").toString();
 			StringTokenizer stringTokenizer = new StringTokenizer(author, " ,.");
 			while (stringTokenizer.hasMoreElements()) {
 				String element = stringTokenizer.nextToken();
-				addIndex2Map(element, UUId, "");
+				addIndex2Map(element, UUId, "",title);
 			}
 		}
 	}
@@ -122,7 +128,7 @@ public class Index {
 				if (!stopWords.equals((element))
 						&& checkElements(element) == false
 						&& element.length() > 2 && isNumeric(element) == false) {
-					addIndex2Map(element, UUId, "");
+					addIndex2Map(element, UUId, "",title);
 
 					addTitle2HashMap(element, title, UUId, description);
 				}
@@ -134,7 +140,7 @@ public class Index {
 
 	}
 
-	private void addIndex2Map(String element, String UUId, String description) {
+	private void addIndex2Map(String element, String UUId, String description,String title) {
 		List<PageIndex> pageWordList = new ArrayList<PageIndex>();
 		PageIndex pageIndex = new PageIndex();
 
@@ -142,6 +148,7 @@ public class Index {
 			pageIndex.setuUId(UUId);
 			pageIndex.setWordCount(1);
 			pageIndex.setDescription(description);
+			pageIndex.setTitle(title);
 			pageWordList.add(pageIndex);
 			wordCount.put(element, pageWordList);
 
@@ -160,6 +167,7 @@ public class Index {
 				pageIndex.setuUId(UUId);
 				pageIndex.setWordCount(1);
 				pageIndex.setDescription(description);
+				pageIndex.setTitle(title);
 				pageWordList.add(pageIndex);
 			}
 			wordCount.put(element, pageWordList);
@@ -260,6 +268,8 @@ public class Index {
 				jsonObj.put("TermFrequency", Double.toString(termFreq));
 				jsonObj.put("TitleRank", Integer.toString(page.getTitleRank()));
 				jsonObj.put("Description", page.getDescription());
+				jsonObj.put("Title", page.getTitle());
+				
 				jsonArray.add(jsonObj);
 			}
 			jsonPage.put(word, jsonArray);

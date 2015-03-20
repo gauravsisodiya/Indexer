@@ -12,6 +12,8 @@ public class PageIndex {
 
 	String description;
 	
+	String title;
+	
 	public String getuUId() {
 		return uUId;
 	}
@@ -50,6 +52,14 @@ public class PageIndex {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 	
